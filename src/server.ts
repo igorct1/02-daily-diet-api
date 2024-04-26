@@ -1,11 +1,12 @@
 import fastify from 'fastify'
+import { env } from './env'
 
 export const app = fastify()
 
 app
   .listen({
-    port: 3333,
+    port: env.PORT,
   })
   .then(() => {
-    console.log('SERVER IS RUNNING!')
+    console.log(`Server is running on port ${env.PORT}`)
   })
