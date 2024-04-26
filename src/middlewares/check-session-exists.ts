@@ -7,7 +7,7 @@ export async function checkSessionExists(
   const sessionId = request.cookies.sessionId
 
   if (!sessionId) {
-    reply.status(404).send({
+    return reply.status(404).send({
       message: 'Anauthorized',
     })
   }

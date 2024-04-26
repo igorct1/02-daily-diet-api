@@ -24,6 +24,7 @@ export async function usersRoutes(app: FastifyInstance) {
     }
 
     await knex('users').insert({
+      id: randomUUID(),
       email: user.email,
       name: user.name,
       session_id: sessionId,
