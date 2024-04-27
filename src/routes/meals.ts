@@ -47,6 +47,7 @@ export async function mealsRoutes(app: FastifyInstance) {
       return reply.status(201).send()
     },
   )
+
   // all
   app.get(
     '',
@@ -74,6 +75,7 @@ export async function mealsRoutes(app: FastifyInstance) {
       })
     },
   )
+
   // specific
   app.get(
     '/:id',
@@ -170,6 +172,48 @@ export async function mealsRoutes(app: FastifyInstance) {
         updated_at: new Date(),
       })
 
+      return reply.status(200).send()
+    },
+  )
+
+  // delete
+  app.delete(
+    '/:id',
+    {
+      preHandler: [checkSessionExists],
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { sessionId } = request.cookies
+
+      const user = await knex('users')
+        .where('session_id', sessionId)
+        .select('*')
+        .first()
+
+      if (!user) {
+        return reply.status(404).send({
+          message: "You're trying to delete a meal that u are not allowed to.",
+        })
+      }
+
+      const mealParamsValidationSchema = z.object({
+        id: z.string(),
+      })
+
+      const { id } = mealParamsValidationSchema.parse(request.params)
+
+      const selectedMealToDelete = await knex('meals')
+        .where('id', id)
+        .select('*')
+        .first()
+
+      if (selectedMealToDelete?.user_id !== user.id) {
+        reply.status(200).send({
+          message: 'The meal that u are trying to delete is from another user.',
+        })
+      }
+
+      await knex('meals').where('id', id).delete()
       return reply.status(200).send()
     },
   )
