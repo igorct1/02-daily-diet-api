@@ -208,7 +208,7 @@ export async function mealsRoutes(app: FastifyInstance) {
         .first()
 
       if (selectedMealToDelete?.user_id !== user.id) {
-        reply.status(200).send({
+        reply.status(403).send({
           message: 'The meal that u are trying to delete is from another user.',
         })
       }
